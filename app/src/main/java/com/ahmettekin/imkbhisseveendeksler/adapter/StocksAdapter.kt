@@ -6,17 +6,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.ahmettekin.imkbhisseveendeksler.R
-import com.ahmettekin.imkbhisseveendeksler.model.DetailModel
 import com.ahmettekin.imkbhisseveendeksler.model.ListModel
-import com.ahmettekin.imkbhisseveendeksler.service.DetailApiClient
-import com.ahmettekin.imkbhisseveendeksler.service.DetailApiInterface
 import com.ahmettekin.imkbhisseveendeksler.utils.Utils
-import com.ahmettekin.imkbhisseveendeksler.view.DetailActivity
+import com.ahmettekin.imkbhisseveendeksler.DetailActivity
 import kotlinx.android.synthetic.main.row_layout.view.*
-import retrofit2.Call
-import retrofit2.Response
 import java.text.DecimalFormat
-import javax.security.auth.callback.Callback
 import kotlin.math.abs
 
 class StocksAdapter(private val myList: List<ListModel.Stock?>?,val aesKey:String, val aesIV:String):RecyclerView.Adapter<StocksAdapter.MyViewHolder>() {
@@ -56,7 +50,7 @@ class StocksAdapter(private val myList: List<ListModel.Stock?>?,val aesKey:Strin
 
         holder.mitemView.setOnClickListener {
             val id="bilinmiyor"
-            val intent= Intent(it.context,DetailActivity::class.java)
+            val intent= Intent(it.context, DetailActivity::class.java)
             intent.putExtra("id",id)
             it.context.startActivity(intent)
         }

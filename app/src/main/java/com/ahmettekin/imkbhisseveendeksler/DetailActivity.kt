@@ -1,8 +1,7 @@
-package com.ahmettekin.imkbhisseveendeksler.view
+package com.ahmettekin.imkbhisseveendeksler
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.model.DetailModel
 import com.ahmettekin.imkbhisseveendeksler.service.DetailApiClient
 import com.ahmettekin.imkbhisseveendeksler.service.DetailApiInterface
@@ -10,7 +9,6 @@ import kotlinx.android.synthetic.main.activity_detail.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.create
 
 class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

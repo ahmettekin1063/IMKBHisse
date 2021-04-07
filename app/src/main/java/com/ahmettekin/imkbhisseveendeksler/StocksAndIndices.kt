@@ -1,13 +1,12 @@
-package com.ahmettekin.imkbhisseveendeksler.view
+package com.ahmettekin.imkbhisseveendeksler
 
 import android.os.Bundle
-import android.util.Base64
 import android.widget.SearchView
+import androidx.appcompat.app.ActionBarDrawerToggle
 
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.adapter.StocksAdapter
 import com.ahmettekin.imkbhisseveendeksler.model.ListModel
 import com.ahmettekin.imkbhisseveendeksler.model.ListModel.Stock
@@ -22,10 +21,6 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
-import javax.crypto.Cipher
-import javax.crypto.SecretKey
-import javax.crypto.spec.IvParameterSpec
-import javax.crypto.spec.SecretKeySpec
 
 
 class StocksAndIndices : AppCompatActivity() {
@@ -89,5 +84,10 @@ class StocksAndIndices : AppCompatActivity() {
                 return false
             }
         })
+
+        setSupportActionBar(toolbar_stockList)
+        val toggle= ActionBarDrawerToggle(this@StocksAndIndices,drawer,toolbar_stockList,0,0)
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
     }
 }

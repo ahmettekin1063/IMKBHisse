@@ -1,10 +1,9 @@
-package com.ahmettekin.imkbhisseveendeksler.view
+package com.ahmettekin.imkbhisseveendeksler
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.model.HandshakeModel
 import com.ahmettekin.imkbhisseveendeksler.model.HandshakeRequestModel
 import com.ahmettekin.imkbhisseveendeksler.service.HandshakeApiClient
@@ -47,7 +46,10 @@ class MainActivity : AppCompatActivity() {
                 TODO("Not yet implemented")
             }
         })
+
     }
+
+
 
     fun goToStocksAndIndices(view: View){
         val intent= Intent(this@MainActivity, StocksAndIndices::class.java)
