@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".view.DetailActivity">
+
+    <TextView
+        android:id="@+id/tvDetaySembol"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="104dp"
+        android:text="Sembol"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tvDetayTaban"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="9dp"
+        android:layout_marginBottom="42dp"
+        android:text="Taban"
+        app:layout_constraintBottom_toTopOf="@+id/textView13"
+        app:layout_constraintEnd_toEndOf="@+id/tvDetayTavan" />
+
+    <TextView
+        android:id="@+id/tvDetayTavan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="41dp"
+        android:text="Tavan"
+        app:layout_constraintBottom_toTopOf="@+id/tvDetayTaban"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/tvDetayAdet"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="Adet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetayGunYuk" />
+
+    <TextView
+        android:id="@+id/tvDetayGunYuk"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="31dp"
+        android:text="Günlük Yüksek"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetayGunDus" />
+
+    <TextView
+        android:id="@+id/tvDetayGunDus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Günlük Düşük"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.47"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvDetaySembol" />
+
+    <TextView
+        android:id="@+id/tvDetaySatis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="42dp"
+        android:text="Satış"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetayAlis" />
+
+    <TextView
+        android:id="@+id/tvDetayAlis"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="41dp"
+        android:text="Alış"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetayHacim" />
+
+    <TextView
+        android:id="@+id/tvDetayHacim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="45dp"
+        android:layout_marginTop="44dp"
+        android:text="Hacim"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetayFark" />
+
+    <TextView
+        android:id="@+id/tvDetayFark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="37dp"
+        android:text="Fark"
+        app:layout_constraintEnd_toEndOf="@+id/tvDetayFiyat"
+        app:layout_constraintStart_toStartOf="@+id/tvDetayFiyat"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetayFiyat" />
+
+    <TextView
+        android:id="@+id/tvDetayFiyat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="31dp"
+        android:layout_marginEnd="1dp"
+        android:text="Fiyat"
+        app:layout_constraintEnd_toEndOf="@+id/tvDetaySatis"
+        app:layout_constraintStart_toStartOf="@+id/tvDetaySembol"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetaySembol" />
+
+    <TextView
+        android:id="@+id/textView13"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="Değişim"
+        app:layout_constraintEnd_toStartOf="@+id/imgDetayDegisim"
+        app:layout_constraintTop_toTopOf="@+id/imgDetayDegisim" />
+
+    <ImageView
+        android:id="@+id/imgDetayDegisim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="37dp"
+        android:layout_marginTop="184dp"
+        android:layout_marginBottom="185dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tvDetayTaban"
+        app:layout_constraintTop_toTopOf="@+id/tvDetayAdet"
+        app:srcCompat="@drawable/up_arrow" />
+</androidx.constraintlayout.widget.ConstraintLayout>
