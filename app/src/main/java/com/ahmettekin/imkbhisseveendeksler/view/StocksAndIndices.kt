@@ -1,23 +1,20 @@
-package com.ahmettekin.imkbhisseveendeksler
+package com.ahmettekin.imkbhisseveendeksler.view
 
-import android.content.Intent
 import android.os.Bundle
-import android.view.MenuItem
 import android.widget.SearchView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.adapter.StocksAdapter
 import com.ahmettekin.imkbhisseveendeksler.model.ListModel
 import com.ahmettekin.imkbhisseveendeksler.model.ListModel.Stock
 import com.ahmettekin.imkbhisseveendeksler.model.ListRequestModel
 import com.ahmettekin.imkbhisseveendeksler.service.StocksApiInterface
 import com.ahmettekin.imkbhisseveendeksler.utils.Utils
-import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.activity_stocks_and_indices.*
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -40,6 +37,7 @@ class StocksAndIndices : AppCompatActivity(){
         aesKey = intent.getStringExtra("aesKey")
         aesIV = intent.getStringExtra("aesIV")
         authorization = intent.getStringExtra("authorization")
+
         val toggle= ActionBarDrawerToggle(this@StocksAndIndices,drawer,toolbar_stockList,0,0)
         drawer.addDrawerListener(toggle)
         toggle.syncState()

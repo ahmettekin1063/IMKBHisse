@@ -1,7 +1,8 @@
-package com.ahmettekin.imkbhisseveendeksler
+package com.ahmettekin.imkbhisseveendeksler.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.model.DetailModel
 import com.ahmettekin.imkbhisseveendeksler.service.DetailApiClient
 import com.ahmettekin.imkbhisseveendeksler.service.DetailApiInterface

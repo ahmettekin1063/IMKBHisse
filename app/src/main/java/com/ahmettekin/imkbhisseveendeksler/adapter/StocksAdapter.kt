@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.model.ListModel
 import com.ahmettekin.imkbhisseveendeksler.utils.Utils
-import com.ahmettekin.imkbhisseveendeksler.DetailActivity
+import com.ahmettekin.imkbhisseveendeksler.view.DetailActivity
 import kotlinx.android.synthetic.main.row_layout.view.*
 import java.text.DecimalFormat
 import kotlin.math.abs
