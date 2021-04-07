@@ -41,15 +41,11 @@ class MainActivity : AppCompatActivity() {
                 mAuthorization=response.body()?.authorization!!
                 button.visibility=View.VISIBLE
             }
-
             override fun onFailure(call: Call<HandshakeModel>, t: Throwable) {
                 TODO("Not yet implemented")
             }
         })
-
     }
-
-
 
     fun goToStocksAndIndices(view: View){
         val intent= Intent(this@MainActivity, StocksAndIndices::class.java)
