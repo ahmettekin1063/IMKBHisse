@@ -60,7 +60,7 @@ class StocksAndIndices : AppCompatActivity(){
                     }
                 }
                 recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndices)
-                recyclerView.adapter = StocksAdapter(myFilteredList,aesKey!!,aesIV!!)
+                recyclerView.adapter = StocksAdapter(myFilteredList,aesKey!!,aesIV!!,authorization!!)
                 return false
             }
         })
@@ -81,7 +81,7 @@ class StocksAndIndices : AppCompatActivity(){
     }
 
     private fun configureRecylerView(period: String) {
-        val m=Utils.encrypt("AES/CBC/PKCS7Padding",period,aesKey,aesIV)
+        val encryptedPeriod=Utils.encrypt("AES/CBC/PKCS7Padding",period,aesKey,aesIV)
         val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
 
         httpClient.addInterceptor { chain ->
@@ -102,14 +102,20 @@ class StocksAndIndices : AppCompatActivity(){
             .build()
 
         val stocksApi=retrofit.create(StocksApiInterface::class.java)
-        val apiCall = stocksApi.getStocks(ListRequestModel(m))
+        val apiCall = stocksApi.getStocks(ListRequestModel(encryptedPeriod))
 
         apiCall.enqueue(object : Callback<ListModel> {
             override fun onResponse(call: Call<ListModel>, response: Response<ListModel>) {
-                recyclerView.layoutManager=LinearLayoutManager(this@StocksAndIndices)
-                recyclerView.adapter=StocksAdapter(response.body()?.stocks,aesKey!!,aesIV!!)
-                myList=response.body()?.stocks
+                recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndices)
+                recyclerView.adapter =
+                    StocksAdapter(response.body()?.stocks, aesKey!!, aesIV!!, authorization!!)
+                myList = response.body()?.stocks
+
+                for (i in myList!!) {
+                    println(i?.difference)
+                }
             }
+
             override fun onFailure(call: Call<ListModel>, t: Throwable) {}
         })
 

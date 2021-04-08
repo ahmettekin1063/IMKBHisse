@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     val platformName="AndroidSimulator"
     val deviceModel="sdk_gphone_x86"
     val manifacturer="Google"
+
     var mAesKey=""
     var mAesIV=""
     var mAuthorization=""
