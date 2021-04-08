@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.IMKBHisseVeEndeksler">
         <activity android:name=".view.DetailActivity"></activity>
-        <activity android:name=".view.StocksAndIndices" />
+        <activity android:name=".view.StocksAndIndicesActivity" />
         <activity android:name=".view.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

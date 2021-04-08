@@ -6,7 +6,7 @@ import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.model.DetailModel
 import com.ahmettekin.imkbhisseveendeksler.model.DetailRequestModel
 import com.ahmettekin.imkbhisseveendeksler.service.DetailApiInterface
-import com.ahmettekin.imkbhisseveendeksler.utils.Utils
+import com.ahmettekin.imkbhisseveendeksler.utils.AESEncryption
 import kotlinx.android.synthetic.main.activity_detail.*
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -14,7 +14,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.Math.abs
 
 class DetailActivity : AppCompatActivity() {
 
@@ -26,20 +25,19 @@ class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+        initialization()
+        getDetails()
+    }
 
+    private fun initialization() {
         id=intent.getStringExtra("id")
         authorization=intent.getStringExtra("authorization")
         aesKey=intent.getStringExtra("aesKey")
         aesIV=intent.getStringExtra("aesIV")
-
-        getDetails()
-        println("$id****$authorization")
     }
 
     private fun getDetails() {
-
-        val encryptedId= Utils.encrypt("AES/CBC/PKCS7Padding",id,aesKey,aesIV)
-
+        val encryptedId= AESEncryption.encrypt("AES/CBC/PKCS7Padding",id,aesKey,aesIV)
         val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
 
         httpClient.addInterceptor { chain ->
@@ -64,7 +62,7 @@ class DetailActivity : AppCompatActivity() {
 
         apiCall?.enqueue(object : Callback<DetailModel>{
             override fun onResponse(call: Call<DetailModel>, response: Response<DetailModel>) {
-                configUI(response.body())
+                configureUI(response.body())
             }
 
             override fun onFailure(call: Call<DetailModel>, t: Throwable) {
@@ -73,23 +71,22 @@ class DetailActivity : AppCompatActivity() {
         })
     }
 
-    private fun configUI(detailData:DetailModel?){
+    private fun configureUI(responseDetailData:DetailModel?){
+        "Sembol: ${AESEncryption.decrypt("AES/CBC/PKCS7Padding",responseDetailData?.symbol,aesKey,aesIV)}".also { tvDetaySembol.text = it }
+        "Fiyat: ${responseDetailData?.price.toString()}".also { tvDetayFiyat.text = it }
+        "%Fark: ${kotlin.math.abs(responseDetailData?.difference!!)}".also { tvDetayFark.text = it }
+        "Hacim: ${String.format("%.2f",responseDetailData.volume)}".also { tvDetayHacim.text = it }
+        "Alış: ${responseDetailData.bid.toString()}".also { tvDetayAlis.text = it }
+        "Satış:${responseDetailData.offer.toString()}".also { tvDetaySatis.text = it }
+        "Günlük Düşük: ${responseDetailData.lowest.toString()}".also { tvDetayGunDus.text = it }
+        "Günlük Yüksek: ${responseDetailData.highest.toString()}".also { tvDetayGunYuk.text = it }
+        "Adet: ${responseDetailData.count.toString()}".also { tvDetayAdet.text = it }
+        "Tavan: ${responseDetailData.maximum.toString()}".also { tvDetayTavan.text = it }
+        "Taban: ${responseDetailData.minimum.toString()}".also { tvDetayTaban.text = it }
 
-        "Sembol: ${Utils.decrypt("AES/CBC/PKCS7Padding",detailData?.symbol,aesKey,aesIV)}".also { tvDetaySembol.text = it }
-        "Fiyat: ${detailData?.price.toString()}".also { tvDetayFiyat.text = it }
-        "%Fark: ${kotlin.math.abs(detailData?.difference!!)}".also { tvDetayFark.text = it }
-        "Hacim: ${String.format("%.2f",detailData.volume)}".also { tvDetayHacim.text = it }
-        "Alış: ${detailData.bid.toString()}".also { tvDetayAlis.text = it }
-        "Satış:${detailData.offer.toString()}".also { tvDetaySatis.text = it }
-        "Günlük Düşük: ${detailData.lowest.toString()}".also { tvDetayGunDus.text = it }
-        "Günlük Yüksek: ${detailData.highest.toString()}".also { tvDetayGunYuk.text = it }
-        "Adet: ${detailData.count.toString()}".also { tvDetayAdet.text = it }
-        "Tavan: ${detailData.maximum.toString()}".also { tvDetayTavan.text = it }
-        "Taban: ${detailData.minimum.toString()}".also { tvDetayTaban.text = it }
-
-        if(detailData.isUp!!){
+        if(responseDetailData.isUp!!){
             imgDetayDegisim.setImageResource(R.drawable.up_arrow)
-        }else if(detailData.isDown!!){
+        }else if(responseDetailData.isDown!!){
             imgDetayDegisim.setImageResource(R.drawable.down_arrow)
         }
     }

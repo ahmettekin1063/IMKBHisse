@@ -14,7 +14,7 @@ import com.ahmettekin.imkbhisseveendeksler.model.ListModel
 import com.ahmettekin.imkbhisseveendeksler.model.ListModel.Stock
 import com.ahmettekin.imkbhisseveendeksler.model.ListRequestModel
 import com.ahmettekin.imkbhisseveendeksler.service.StocksApiInterface
-import com.ahmettekin.imkbhisseveendeksler.utils.Utils
+import com.ahmettekin.imkbhisseveendeksler.utils.AESEncryption
 import kotlinx.android.synthetic.main.activity_stocks_and_indices.*
 import okhttp3.OkHttpClient
 import retrofit2.Call
@@ -25,7 +25,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
 
-class StocksAndIndices : AppCompatActivity(){
+class StocksAndIndicesActivity : AppCompatActivity(){
     private var myList: List<Stock?>? = null
     private var aesKey:String?=null
     private var aesIV:String?=null
@@ -34,16 +34,11 @@ class StocksAndIndices : AppCompatActivity(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stocks_and_indices)
-        aesKey = intent.getStringExtra("aesKey")
-        aesIV = intent.getStringExtra("aesIV")
-        authorization = intent.getStringExtra("authorization")
+        initialization()
+        configureListener()
+    }
 
-        val toggle= ActionBarDrawerToggle(this@StocksAndIndices,drawer,toolbar_stockList,0,0)
-        drawer.addDrawerListener(toggle)
-        toggle.syncState()
-        configureRecylerView("all")
-
-        navigationView.inflateHeaderView(R.layout.navigation_baslik)
+    private fun configureListener() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 TODO("Not yet implemented")
@@ -52,19 +47,18 @@ class StocksAndIndices : AppCompatActivity(){
             override fun onQueryTextChange(newText: String?): Boolean {
                 val myFilteredList = ArrayList<Stock>()
                 for (i in myList!!) {
-                    if (Utils.decrypt("AES/CBC/PKCS7Padding",i!!.symbol,aesKey,aesIV)
+                    if (AESEncryption.decrypt("AES/CBC/PKCS7Padding",i!!.symbol,aesKey,aesIV)
                             .toLowerCase()
                             .trim()
                             .contains(newText!!.toLowerCase().trim())) {
                         myFilteredList.add(i)
                     }
                 }
-                recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndices)
+                recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndicesActivity)
                 recyclerView.adapter = StocksAdapter(myFilteredList,aesKey!!,aesIV!!,authorization!!)
                 return false
             }
         })
-
 
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
@@ -80,8 +74,20 @@ class StocksAndIndices : AppCompatActivity(){
         }
     }
 
+    private fun initialization() {
+        aesKey = intent.getStringExtra("aesKey")
+        aesIV = intent.getStringExtra("aesIV")
+        authorization = intent.getStringExtra("authorization")
+        val toggle= ActionBarDrawerToggle(this@StocksAndIndicesActivity,drawer,toolbar_stockList,0,0)
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+        configureRecylerView("all")
+        navigationView.inflateHeaderView(R.layout.navigation_baslik)
+    }
+
     private fun configureRecylerView(period: String) {
-        val encryptedPeriod=Utils.encrypt("AES/CBC/PKCS7Padding",period,aesKey,aesIV)
+        val encryptedPeriod=
+            AESEncryption.encrypt("AES/CBC/PKCS7Padding",period,aesKey,aesIV)
         val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
 
         httpClient.addInterceptor { chain ->
@@ -106,7 +112,7 @@ class StocksAndIndices : AppCompatActivity(){
 
         apiCall.enqueue(object : Callback<ListModel> {
             override fun onResponse(call: Call<ListModel>, response: Response<ListModel>) {
-                recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndices)
+                recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndicesActivity)
                 recyclerView.adapter =
                     StocksAdapter(response.body()?.stocks, aesKey!!, aesIV!!, authorization!!)
                 myList = response.body()?.stocks
@@ -118,7 +124,6 @@ class StocksAndIndices : AppCompatActivity(){
 
             override fun onFailure(call: Call<ListModel>, t: Throwable) {}
         })
-
     }
 
     override fun onBackPressed() {
@@ -128,5 +133,4 @@ class StocksAndIndices : AppCompatActivity(){
             super.onBackPressed()
         }
     }
-
 }

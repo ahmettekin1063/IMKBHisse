@@ -16,7 +16,7 @@ import retrofit2.Response
 import java.util.*
 
 /**
- *Created by Ahmet Tekin on 8.04.2021
+ *Created by Ahmet on 8.04.2021
  */
 class MainActivity : AppCompatActivity() {
     val systemVersion="11"
@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity() {
     val deviceModel="sdk_gphone_x86"
     val manifacturer="Google"
 
+    var deviceId=""
     var mAesKey=""
     var mAesIV=""
     var mAuthorization=""
@@ -31,7 +32,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val deviceId=UUID.randomUUID().toString()
+        deviceId=UUID.randomUUID().toString()
+        getHandshake()
+    }
+
+    fun goToStocksAndIndices(view: View){
+        val intent= Intent(this@MainActivity, StocksAndIndicesActivity::class.java)
+        intent.putExtra("aesKey",mAesKey)
+        intent.putExtra("aesIV",mAesIV)
+        intent.putExtra("authorization",mAuthorization)
+        startActivity(intent)
+    }
+
+    private fun getHandshake(){
         val requestModel = HandshakeRequestModel(deviceId,deviceModel,manifacturer,platformName,systemVersion)
         val handshakesApi=HandshakeApiClient.client?.create(HandshakeApiInterface::class.java)
         val apiCall=handshakesApi?.getHandshake(requestModel)
@@ -47,13 +60,5 @@ class MainActivity : AppCompatActivity() {
                 TODO("Not yet implemented")
             }
         })
-    }
-
-    fun goToStocksAndIndices(view: View){
-        val intent= Intent(this@MainActivity, StocksAndIndices::class.java)
-        intent.putExtra("aesKey",mAesKey)
-        intent.putExtra("aesIV",mAesIV)
-        intent.putExtra("authorization",mAuthorization)
-        startActivity(intent)
     }
 }
