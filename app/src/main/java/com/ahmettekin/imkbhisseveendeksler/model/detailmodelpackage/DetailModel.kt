@@ -1,7 +1,8 @@
-package com.ahmettekin.imkbhisseveendeksler.model
+package com.ahmettekin.imkbhisseveendeksler.model.detailmodelpackage
 
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 class DetailModel(
     @SerializedName("bid")
@@ -36,25 +37,4 @@ class DetailModel(
     var symbol: String?,
     @SerializedName("volume")
     var volume: Double?
-) {
-    class GraphicData(
-        @SerializedName("day")
-        var day: Int?,
-        @SerializedName("value")
-        var value: Double?
-    )
-
-    class Status(
-        @SerializedName("error")
-        var error: Error?,
-        @SerializedName("isSuccess")
-        var isSuccess: Boolean?
-    ) {
-        class Error(
-            @SerializedName("code")
-            var code: Int?,
-            @SerializedName("message")
-            var message: String?
-        )
-    }
-}
+) :Serializable

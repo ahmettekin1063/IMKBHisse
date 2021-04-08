@@ -14,7 +14,10 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 public class AESEncryption {
-    public static String encrypt(String algorithm, String input, String key, String iv)
+
+    private final static String algorithm="AES/CBC/PKCS7Padding";
+
+    public static String encrypt(String input, String key, String iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.ENCRYPT_MODE, strToSecretKey(key), strToIV(iv));
@@ -22,7 +25,7 @@ public class AESEncryption {
         return Base64.getEncoder().encodeToString(cipherText);
     }
 
-    public static String decrypt(String algorithm, String cipherText, String key, String iv)
+    public static String decrypt(String cipherText, String key, String iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.DECRYPT_MODE, strToSecretKey(key), strToIV(iv));

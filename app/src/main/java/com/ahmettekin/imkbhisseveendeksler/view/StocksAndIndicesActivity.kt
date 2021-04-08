@@ -2,6 +2,7 @@ package com.ahmettekin.imkbhisseveendeksler.view
 
 import android.os.Bundle
 import android.widget.SearchView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 
 
@@ -30,12 +31,67 @@ class StocksAndIndicesActivity : AppCompatActivity(){
     private var aesKey:String?=null
     private var aesIV:String?=null
     private var authorization:String?=null
+    private val BASE_URL="https://mobilechallenge.veripark.com/"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_stocks_and_indices)
         initialization()
         configureListener()
+    }
+
+    private fun initialization() {
+        aesKey = intent.getStringExtra("aesKey")
+        aesIV = intent.getStringExtra("aesIV")
+        authorization = intent.getStringExtra("authorization")
+        val toggle= ActionBarDrawerToggle(this@StocksAndIndicesActivity,drawer,toolbar_stockList,0,0)
+        drawer.addDrawerListener(toggle)
+        toggle.syncState()
+        configureRecylerView("all")
+        navigationView.inflateHeaderView(R.layout.navigation_baslik)
+    }
+
+    private fun configureRecylerView(period: String) {
+        val encryptedPeriod=
+            AESEncryption.encrypt(period,aesKey,aesIV)
+        val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
+
+        httpClient.addInterceptor { chain ->
+            val original = chain.request()
+            val request = original.newBuilder()
+                .header("Content-Type", "application/json")
+                .header("X-VP-Authorization", authorization!!)
+                .method(original.method(), original.body())
+                .build()
+            chain.proceed(request)
+        }
+
+        val client = httpClient.build()
+        val retrofit = Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(client)
+            .build()
+
+        val stocksApi=retrofit.create(StocksApiInterface::class.java)
+        val apiCall = stocksApi.getStocks(ListRequestModel(encryptedPeriod))
+
+        apiCall.enqueue(object : Callback<ListModel> {
+            override fun onResponse(call: Call<ListModel>, response: Response<ListModel>) {
+                if (response.isSuccessful&&response.body()?.status?.isSuccess!!) {
+                    recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndicesActivity)
+                    recyclerView.adapter =
+                        StocksAdapter(response.body()?.stocks, aesKey!!, aesIV!!, authorization!!)
+                    myList = response.body()?.stocks
+                }else{
+                    Toast.makeText(this@StocksAndIndicesActivity,"Hata oluştu",Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<ListModel>, t: Throwable) {
+                Toast.makeText(this@StocksAndIndicesActivity,"Hata: ${t.localizedMessage}",Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     private fun configureListener() {
@@ -46,12 +102,12 @@ class StocksAndIndicesActivity : AppCompatActivity(){
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 val myFilteredList = ArrayList<Stock>()
-                for (i in myList!!) {
-                    if (AESEncryption.decrypt("AES/CBC/PKCS7Padding",i!!.symbol,aesKey,aesIV)
+                for (temp in myList!!) {
+                    if (AESEncryption.decrypt(temp!!.symbol,aesKey,aesIV)
                             .toLowerCase()
                             .trim()
                             .contains(newText!!.toLowerCase().trim())) {
-                        myFilteredList.add(i)
+                        myFilteredList.add(temp)
                     }
                 }
                 recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndicesActivity)
@@ -72,58 +128,6 @@ class StocksAndIndicesActivity : AppCompatActivity(){
             drawer.closeDrawer(GravityCompat.START)
             true
         }
-    }
-
-    private fun initialization() {
-        aesKey = intent.getStringExtra("aesKey")
-        aesIV = intent.getStringExtra("aesIV")
-        authorization = intent.getStringExtra("authorization")
-        val toggle= ActionBarDrawerToggle(this@StocksAndIndicesActivity,drawer,toolbar_stockList,0,0)
-        drawer.addDrawerListener(toggle)
-        toggle.syncState()
-        configureRecylerView("all")
-        navigationView.inflateHeaderView(R.layout.navigation_baslik)
-    }
-
-    private fun configureRecylerView(period: String) {
-        val encryptedPeriod=
-            AESEncryption.encrypt("AES/CBC/PKCS7Padding",period,aesKey,aesIV)
-        val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
-
-        httpClient.addInterceptor { chain ->
-            val original = chain.request()
-            val request = original.newBuilder()
-                .header("Content-Type", "application/json")
-                .header("X-VP-Authorization", authorization!!)
-                .method(original.method(), original.body())
-                .build()
-            chain.proceed(request)
-        }
-
-        val client = httpClient.build()
-        val retrofit = Retrofit.Builder()
-            .baseUrl("https://mobilechallenge.veripark.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(client)
-            .build()
-
-        val stocksApi=retrofit.create(StocksApiInterface::class.java)
-        val apiCall = stocksApi.getStocks(ListRequestModel(encryptedPeriod))
-
-        apiCall.enqueue(object : Callback<ListModel> {
-            override fun onResponse(call: Call<ListModel>, response: Response<ListModel>) {
-                recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndicesActivity)
-                recyclerView.adapter =
-                    StocksAdapter(response.body()?.stocks, aesKey!!, aesIV!!, authorization!!)
-                myList = response.body()?.stocks
-
-                for (i in myList!!) {
-                    println(i?.difference)
-                }
-            }
-
-            override fun onFailure(call: Call<ListModel>, t: Throwable) {}
-        })
     }
 
     override fun onBackPressed() {

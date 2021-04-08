@@ -138,4 +138,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:title="IMKB Hİsse ve Endeksler" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/mChart"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvDetaySatis" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

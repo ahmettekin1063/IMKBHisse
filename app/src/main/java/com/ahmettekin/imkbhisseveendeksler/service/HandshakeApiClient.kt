@@ -4,7 +4,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 object HandshakeApiClient {
-    val BASE_URL="https://mobilechallenge.veripark.com/"
+    private const val BASE_URL="https://mobilechallenge.veripark.com/"
     private var retrofit: Retrofit? = null
     val client: Retrofit?
         get() {

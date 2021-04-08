@@ -4,6 +4,8 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.model.HandshakeModel
 import com.ahmettekin.imkbhisseveendeksler.model.HandshakeRequestModel
@@ -19,10 +21,10 @@ import java.util.*
  *Created by Ahmet on 8.04.2021
  */
 class MainActivity : AppCompatActivity() {
-    val systemVersion="11"
-    val platformName="AndroidSimulator"
-    val deviceModel="sdk_gphone_x86"
-    val manifacturer="Google"
+    val systemVersion="10"
+    val platformName="Android"
+    val deviceModel="Galaxy S9+"
+    val manifacturer="Samsung"
 
     var deviceId=""
     var mAesKey=""
@@ -30,18 +32,11 @@ class MainActivity : AppCompatActivity() {
     var mAuthorization=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         deviceId=UUID.randomUUID().toString()
         getHandshake()
-    }
-
-    fun goToStocksAndIndices(view: View){
-        val intent= Intent(this@MainActivity, StocksAndIndicesActivity::class.java)
-        intent.putExtra("aesKey",mAesKey)
-        intent.putExtra("aesIV",mAesIV)
-        intent.putExtra("authorization",mAuthorization)
-        startActivity(intent)
     }
 
     private fun getHandshake(){
@@ -51,14 +46,26 @@ class MainActivity : AppCompatActivity() {
         button.visibility=View.INVISIBLE
         apiCall?.enqueue(object : Callback<HandshakeModel> {
             override fun onResponse(call: Call<HandshakeModel>, response: Response<HandshakeModel>) {
-                mAesKey=response.body()?.aesKey!!
-                mAesIV=response.body()?.aesIV!!
-                mAuthorization=response.body()?.authorization!!
-                button.visibility=View.VISIBLE
+                if (response.isSuccessful && response.body()?.status?.isSuccess!!) {
+                    mAesKey = response.body()?.aesKey!!
+                    mAesIV = response.body()?.aesIV!!
+                    mAuthorization = response.body()?.authorization!!
+                    button.visibility = View.VISIBLE
+                }else{
+                    Toast.makeText(this@MainActivity,"Hata oluştu",Toast.LENGTH_SHORT).show()
+                }
             }
             override fun onFailure(call: Call<HandshakeModel>, t: Throwable) {
-                TODO("Not yet implemented")
+                Toast.makeText(this@MainActivity,"Hata: ${t.localizedMessage}",Toast.LENGTH_SHORT).show()
             }
         })
+    }
+
+    fun goToStocksAndIndices(view: View){
+        val intent= Intent(this@MainActivity, StocksAndIndicesActivity::class.java)
+        intent.putExtra("aesKey",mAesKey)
+        intent.putExtra("aesIV",mAesIV)
+        intent.putExtra("authorization",mAuthorization)
+        startActivity(intent)
     }
 }
