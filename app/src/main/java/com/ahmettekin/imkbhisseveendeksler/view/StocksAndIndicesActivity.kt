@@ -3,6 +3,7 @@ package com.ahmettekin.imkbhisseveendeksler.view
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import android.widget.SlidingDrawer
@@ -22,7 +23,9 @@ import com.ahmettekin.imkbhisseveendeksler.model.ListModel.Stock
 import com.ahmettekin.imkbhisseveendeksler.model.ListRequestModel
 import com.ahmettekin.imkbhisseveendeksler.service.StocksApiInterface
 import com.ahmettekin.imkbhisseveendeksler.utils.AESEncryption
+import kotlinx.android.synthetic.main.activity_detail.view.*
 import kotlinx.android.synthetic.main.activity_stocks_and_indices.*
+import kotlinx.android.synthetic.main.row_layout.view.*
 import okhttp3.OkHttpClient
 import retrofit2.Call
 import retrofit2.Callback
@@ -55,7 +58,7 @@ class StocksAndIndicesActivity : AppCompatActivity(){
         toggle.syncState()
         configureRecylerView("all")
         navigationView.inflateHeaderView(R.layout.navigation_baslik)
-        val view=layoutInflater.inflate(R.layout.row_layout,null,false)
+        val view=layoutInflater.inflate(R.layout.row_layout,window.decorView.rootView as ViewGroup,false)
         headerLayout.addView(view)
     }
 

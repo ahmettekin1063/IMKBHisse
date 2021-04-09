@@ -15,8 +15,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Sembol"
-        android:textSize="13sp" />
+        android:text="Sembol" />
 
     <TextView
         android:id="@+id/tvFiyat"
@@ -25,8 +24,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Fiyat"
-        android:textSize="13sp" />
+        android:text="Fiyat" />
 
     <TextView
         android:id="@+id/tvFark"
@@ -35,8 +33,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Fark"
-        android:textSize="13sp" />
+        android:text="Fark" />
 
     <TextView
         android:id="@+id/tvHacim"
@@ -45,8 +42,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Hacim"
-        android:textSize="13sp" />
+        android:text="Hacim" />
 
     <TextView
         android:id="@+id/tvAlis"
@@ -55,8 +51,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Alış"
-        android:textSize="13sp" />
+        android:text="Alış" />
 
     <TextView
         android:id="@+id/tvSatis"
@@ -65,8 +60,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:text="Satış"
-        android:textSize="13sp" />
+        android:text="Satış" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
