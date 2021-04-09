@@ -1,5 +1,7 @@
 package com.ahmettekin.imkbhisseveendeksler.utils;
 
+import android.os.Build;
+
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -22,24 +24,49 @@ public class AESEncryption {
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.ENCRYPT_MODE, strToSecretKey(key), strToIV(iv));
         byte[] cipherText = cipher.doFinal(input.getBytes());
-        return Base64.getEncoder().encodeToString(cipherText);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            return Base64.getEncoder().encodeToString(cipherText);
+        }
+        else{
+            return android.util.Base64.encodeToString(cipherText,android.util.Base64.DEFAULT);
+        }
     }
 
     public static String decrypt(String cipherText, String key, String iv)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance(algorithm);
         cipher.init(Cipher.DECRYPT_MODE, strToSecretKey(key), strToIV(iv));
-        byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
+        byte[] plainText;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
+        }
+        else{
+            plainText = cipher.doFinal(android.util.Base64.decode(cipherText,android.util.Base64.DEFAULT));
+        }
         return new String(plainText);
     }
 
     private static SecretKey strToSecretKey(String str){
-        byte[] decodedKey=Base64.getDecoder().decode(str);
+        byte[] decodedKey;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            decodedKey = Base64.getDecoder().decode(str);
+        }
+        else{
+            decodedKey = android.util.Base64.decode(str,android.util.Base64.DEFAULT);
+        }
+
         return new SecretKeySpec(decodedKey,0,decodedKey.length,"AES");
     }
 
     private static IvParameterSpec strToIV(String str){
-        byte[] iv=Base64.getDecoder().decode(str);
+        byte[] iv;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            iv = Base64.getDecoder().decode(str);
+        }
+        else{
+            iv = android.util.Base64.decode(str,android.util.Base64.DEFAULT);
+        }
+
         return new IvParameterSpec(iv);
     }
 }

@@ -102,16 +102,18 @@ class StocksAndIndicesActivity : AppCompatActivity(){
     private fun configureListener() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                TODO("Not yet implemented")
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 val myFilteredList = ArrayList<Stock>()
+
                 for (temp in myList!!) {
                     if (AESEncryption.decrypt(temp!!.symbol,aesKey,aesIV).toLowerCase().trim().contains(newText!!.toLowerCase().trim())) {
                         myFilteredList.add(temp)
                     }
                 }
+
                 recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndicesActivity)
                 recyclerView.adapter = StocksAdapter(myFilteredList,aesKey!!,aesIV!!,authorization!!)
                 return true
@@ -119,6 +121,7 @@ class StocksAndIndicesActivity : AppCompatActivity(){
         })
 
         navigationView.setNavigationItemSelectedListener {
+
             when (it.itemId) {
                 R.id.item_hisse -> configureRecylerView("all")
                 R.id.item_yuk -> configureRecylerView("increasing")
@@ -137,8 +140,6 @@ class StocksAndIndicesActivity : AppCompatActivity(){
                     resources.getColor(R.color.grey)
                 else this@StocksAndIndicesActivity.window.statusBarColor =
                     resources.getColor(R.color.red)
-
-                println(slideOffset)
             }
 
             override fun onDrawerOpened(drawerView: View) {
@@ -149,9 +150,7 @@ class StocksAndIndicesActivity : AppCompatActivity(){
                 }
             }
 
-            override fun onDrawerClosed(drawerView: View) {
-
-            }
+            override fun onDrawerClosed(drawerView: View) {}
 
             override fun onDrawerStateChanged(newState: Int) {}
 

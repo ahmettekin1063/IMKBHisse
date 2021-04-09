@@ -32,8 +32,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/headerLayout"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:background="#858585"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
