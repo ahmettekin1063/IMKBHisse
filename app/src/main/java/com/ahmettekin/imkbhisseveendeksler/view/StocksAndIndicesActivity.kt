@@ -1,7 +1,9 @@
 package com.ahmettekin.imkbhisseveendeksler.view
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import android.widget.SlidingDrawer
 import android.widget.Toast
@@ -128,6 +130,32 @@ class StocksAndIndicesActivity : AppCompatActivity(){
             drawer.closeDrawer(GravityCompat.START)
             true
         }
+
+        drawer.addDrawerListener(object : DrawerLayout.DrawerListener {
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                if(slideOffset!=0f&&slideOffset>0.35f) this@StocksAndIndicesActivity.window.statusBarColor =
+                    resources.getColor(R.color.grey)
+                else this@StocksAndIndicesActivity.window.statusBarColor =
+                    resources.getColor(R.color.red)
+
+                println(slideOffset)
+            }
+
+            override fun onDrawerOpened(drawerView: View) {
+
+                this@StocksAndIndicesActivity.currentFocus?.let { view ->
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                    imm?.hideSoftInputFromWindow(view.windowToken, 0)
+                }
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {}
+
+        })
 
     }
 

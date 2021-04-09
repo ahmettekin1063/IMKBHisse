@@ -64,6 +64,14 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun renderData() {
+
+        val values: ArrayList<Entry> = ArrayList()
+        var maxStockValue=0f
+        for(temp in detailModel?.graphicData!!){
+            values.add(Entry(temp?.day!!.toFloat(),temp.value!!.toFloat()))
+            if(temp.value!! >maxStockValue) maxStockValue= temp.value!!.toFloat()
+        }
+
         val llXAxis = LimitLine(10f, "Index 10")
         llXAxis.lineWidth = 4f
         llXAxis.enableDashedLine(10f, 10f, 0f)
@@ -74,7 +82,7 @@ class DetailActivity : AppCompatActivity() {
         xAxis.axisMaximum = 30f
         xAxis.axisMinimum = 0f
         xAxis.setDrawLimitLinesBehindData(true)
-        val ll1 = LimitLine(35f, "Maximum Limit")
+        val ll1 = LimitLine(maxStockValue*1.2f, "Maximum Limit")
         ll1.lineWidth = 4f
         ll1.enableDashedLine(10f, 10f, 0f)
         ll1.labelPosition = LimitLine.LimitLabelPosition.RIGHT_TOP
@@ -88,20 +96,18 @@ class DetailActivity : AppCompatActivity() {
         leftAxis.removeAllLimitLines()
         leftAxis.addLimitLine(ll1)
         leftAxis.addLimitLine(ll2)
-        leftAxis.axisMaximum = 60f
+        leftAxis.axisMaximum = maxStockValue*1.5f
         leftAxis.axisMinimum = 0f
         leftAxis.enableGridDashedLine(10f, 10f, 0f)
         leftAxis.setDrawZeroLine(false)
         leftAxis.setDrawLimitLinesBehindData(false)
         mChart.axisRight.isEnabled = false
-        setData()
+        setData(values)
     }
 
-    private fun setData() {
-        val values: ArrayList<Entry> = ArrayList()
-        for(temp in detailModel?.graphicData!!){
-            values.add(Entry(temp?.day!!.toFloat(),temp.value!!.toFloat()))
-        }
+    private fun setData(values: ArrayList<Entry>) {
+
+
         val set1: LineDataSet
         if (mChart.data != null && mChart.data.dataSetCount > 0) {
             set1 = mChart.data.getDataSetByIndex(0) as LineDataSet

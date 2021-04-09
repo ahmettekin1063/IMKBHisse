@@ -54,6 +54,8 @@ class StocksAdapter(private val myList: List<ListModel.Stock?>?, private val aes
         }
         else if (myList[position]?.isDown!!) {
             holder.itemView.imgDegisim.setImageResource(R.drawable.down_arrow)
+        }else{
+            holder.itemView.imgDegisim.setImageResource(R.drawable.none)
         }
 
         if (position % 2 == 0) holder.itemView.setBackgroundColor(

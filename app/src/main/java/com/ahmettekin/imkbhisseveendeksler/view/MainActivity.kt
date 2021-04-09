@@ -1,6 +1,7 @@
 package com.ahmettekin.imkbhisseveendeksler.view
 
 import android.content.Intent
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -21,10 +22,10 @@ import java.util.*
  *Created by Ahmet on 8.04.2021
  */
 class MainActivity : AppCompatActivity() {
-    val systemVersion="10"
-    val platformName="Android"
-    val deviceModel="Galaxy S9+"
-    val manifacturer="Samsung"
+    private val systemVersion=Build.VERSION.RELEASE
+    private val platformName="Android"
+    private val deviceModel=Build.MODEL
+    private val manufacturer =Build.MANUFACTURER
 
     var deviceId=""
     var mAesKey=""
@@ -40,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getHandshake(){
-        val requestModel = HandshakeRequestModel(deviceId,deviceModel,manifacturer,platformName,systemVersion)
+        val requestModel = HandshakeRequestModel(deviceId,deviceModel,manufacturer,platformName,systemVersion)
         val handshakesApi=HandshakeApiClient.client?.create(HandshakeApiInterface::class.java)
         val apiCall=handshakesApi?.getHandshake(requestModel)
         button.visibility=View.INVISIBLE
