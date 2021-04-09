@@ -23,12 +23,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import kotlin.math.abs
 
-class StocksAdapter(
-    private val myList: List<ListModel.Stock?>?,
-    private val aesKey: String,
-    private val aesIV: String,
-    private val authorization: String
+class StocksAdapter(private val myList: List<ListModel.Stock?>?, private val aesKey: String, private val aesIV: String, private val authorization: String
 ) : RecyclerView.Adapter<StocksAdapter.MyViewHolder>() {
+
     private val BASE_URL = "https://mobilechallenge.veripark.com/"
 
     class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
@@ -44,11 +41,10 @@ class StocksAdapter(
     }
 
     private fun configureUI(holder: MyViewHolder, position: Int) {
-        holder.itemView.tvSembol.text =
-            AESEncryption.decrypt(myList?.get(position)?.symbol, aesKey, aesIV)
+        holder.itemView.tvDegisim.visibility=View.INVISIBLE
+        holder.itemView.tvSembol.text = AESEncryption.decrypt(myList?.get(position)?.symbol, aesKey, aesIV)
         holder.itemView.tvFiyat.text = String.format("%.2f", myList?.get(position)?.price)
-        holder.itemView.tvFark.text =
-            String.format("%.3f", abs(myList?.get(position)?.difference!!))
+        holder.itemView.tvFark.text = String.format("%.3f", abs(myList?.get(position)?.difference!!))
         holder.itemView.tvAlis.text = String.format("%.2f", myList[position]?.bid)
         holder.itemView.tvSatis.text = String.format("%.2f", myList[position]?.offer)
         holder.itemView.tvHacim.text = String.format("%.2f", myList[position]?.volume)
@@ -75,12 +71,7 @@ class StocksAdapter(
 
     override fun getItemCount() = myList?.size!!
 
-    private fun postDetailsToDetailActivity(
-        id: String,
-        aesKey: String,
-        aesIV: String,
-        context: Context
-    ) {
+    private fun postDetailsToDetailActivity(id: String, aesKey: String, aesIV: String, context: Context) {
         val encryptedId = AESEncryption.encrypt(id, aesKey, aesIV)
         val httpClient: OkHttpClient.Builder = OkHttpClient.Builder()
 
@@ -88,7 +79,7 @@ class StocksAdapter(
             val original = chain.request()
             val request = original.newBuilder()
                 .header("Content-Type", "application/json")
-                .header("X-VP-Authorization", authorization!!)
+                .header("X-VP-Authorization", authorization)
                 .method(original.method(), original.body())
                 .build()
             chain.proceed(request)

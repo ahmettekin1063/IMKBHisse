@@ -45,16 +45,16 @@ class DetailActivity : AppCompatActivity() {
 
     private fun configureUI(detailModel: DetailModel?) {
         "Sembol: ${AESEncryption.decrypt(detailModel?.symbol, aesKey, aesIV)}".also { tvDetaySembol.text = it }
-        "Fiyat: ${detailModel?.price.toString()}".also { tvDetayFiyat.text = it }
+        "Fiyat: ${detailModel?.price}".also { tvDetayFiyat.text = it }
         "%Fark: ${kotlin.math.abs(detailModel?.difference!!)}".also { tvDetayFark.text = it }
         "Hacim: ${String.format("%.2f", detailModel.volume)}".also { tvDetayHacim.text = it }
-        "Alış: ${detailModel.bid.toString()}".also { tvDetayAlis.text = it }
-        "Satış:${detailModel.offer.toString()}".also { tvDetaySatis.text = it }
-        "Günlük Düşük: ${detailModel.lowest.toString()}".also { tvDetayGunDus.text = it }
-        "Günlük Yüksek: ${detailModel.highest.toString()}".also { tvDetayGunYuk.text = it }
-        "Adet: ${detailModel.count.toString()}".also { tvDetayAdet.text = it }
-        "Tavan: ${detailModel.maximum.toString()}".also { tvDetayTavan.text = it }
-        "Taban: ${detailModel.minimum.toString()}".also { tvDetayTaban.text = it }
+        "Alış: ${detailModel.bid}".also { tvDetayAlis.text = it }
+        "Satış:${detailModel.offer}".also { tvDetaySatis.text = it }
+        "Günlük Düşük: ${detailModel.lowest}".also { tvDetayGunDus.text = it }
+        "Günlük Yüksek: ${detailModel.highest}".also { tvDetayGunYuk.text = it }
+        "Adet: ${detailModel.count}".also { tvDetayAdet.text = it }
+        "Tavan: ${detailModel.maximum}".also { tvDetayTavan.text = it }
+        "Taban: ${detailModel.minimum}".also { tvDetayTaban.text = it }
 
         if (detailModel.isUp!!) {
             imgDetayDegisim.setImageResource(R.drawable.up_arrow)
@@ -125,7 +125,7 @@ class DetailActivity : AppCompatActivity() {
             set1.formSize = 15f
 
             if (Utils.getSDKInt() >= 18) {
-                val drawable = ContextCompat.getDrawable(this, R.drawable.fade_blue);
+                val drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
                 set1.fillDrawable = drawable
             } else {
                 set1.fillColor = Color.RED

@@ -1,13 +1,17 @@
 package com.ahmettekin.imkbhisseveendeksler.view
 
 import android.os.Bundle
+import android.view.View
 import android.widget.SearchView
+import android.widget.SlidingDrawer
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 
 
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ahmettekin.imkbhisseveendeksler.R
 import com.ahmettekin.imkbhisseveendeksler.adapter.StocksAdapter
@@ -49,6 +53,8 @@ class StocksAndIndicesActivity : AppCompatActivity(){
         toggle.syncState()
         configureRecylerView("all")
         navigationView.inflateHeaderView(R.layout.navigation_baslik)
+        val view=layoutInflater.inflate(R.layout.row_layout,null,false)
+        headerLayout.addView(view)
     }
 
     private fun configureRecylerView(period: String) {
@@ -80,12 +86,9 @@ class StocksAndIndicesActivity : AppCompatActivity(){
             override fun onResponse(call: Call<ListModel>, response: Response<ListModel>) {
                 if (response.isSuccessful&&response.body()?.status?.isSuccess!!) {
                     recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndicesActivity)
-                    recyclerView.adapter =
-                        StocksAdapter(response.body()?.stocks, aesKey!!, aesIV!!, authorization!!)
+                    recyclerView.adapter = StocksAdapter(response.body()?.stocks, aesKey!!, aesIV!!, authorization!!)
                     myList = response.body()?.stocks
-                }else{
-                    Toast.makeText(this@StocksAndIndicesActivity,"Hata oluştu",Toast.LENGTH_SHORT).show()
-                }
+                }else Toast.makeText(this@StocksAndIndicesActivity,"Hata oluştu",Toast.LENGTH_SHORT).show()
             }
 
             override fun onFailure(call: Call<ListModel>, t: Throwable) {
@@ -103,16 +106,13 @@ class StocksAndIndicesActivity : AppCompatActivity(){
             override fun onQueryTextChange(newText: String?): Boolean {
                 val myFilteredList = ArrayList<Stock>()
                 for (temp in myList!!) {
-                    if (AESEncryption.decrypt(temp!!.symbol,aesKey,aesIV)
-                            .toLowerCase()
-                            .trim()
-                            .contains(newText!!.toLowerCase().trim())) {
+                    if (AESEncryption.decrypt(temp!!.symbol,aesKey,aesIV).toLowerCase().trim().contains(newText!!.toLowerCase().trim())) {
                         myFilteredList.add(temp)
                     }
                 }
                 recyclerView.layoutManager = LinearLayoutManager(this@StocksAndIndicesActivity)
                 recyclerView.adapter = StocksAdapter(myFilteredList,aesKey!!,aesIV!!,authorization!!)
-                return false
+                return true
             }
         })
 
@@ -128,6 +128,7 @@ class StocksAndIndicesActivity : AppCompatActivity(){
             drawer.closeDrawer(GravityCompat.START)
             true
         }
+
     }
 
     override fun onBackPressed() {

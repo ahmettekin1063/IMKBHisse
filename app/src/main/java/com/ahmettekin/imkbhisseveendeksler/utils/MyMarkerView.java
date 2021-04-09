@@ -31,7 +31,6 @@ public class MyMarkerView extends MarkerView {
         super.refreshContent(e, highlight);
     }
 
-
     @Override
     public MPPointF getOffset() {
         return new MPPointF(-(getWidth() / 2), -getHeight());

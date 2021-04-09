@@ -13,7 +13,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="10dp"
         android:layout_marginBottom="8dp"
-        android:text="tvSembol"
+        android:text="Sembol"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvFiyat"
@@ -27,7 +27,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="8dp"
-        android:text="fyt"
+        android:text="Fiyat"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvFark"
@@ -40,7 +40,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="21dp"
         android:layout_marginBottom="9dp"
-        android:text="frk"
+        android:text="Fark"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvHacim"
@@ -53,7 +53,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="14dp"
         android:layout_marginBottom="8dp"
-        android:text="tvHacim"
+        android:text="Hacim"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvAlis"
@@ -66,7 +66,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="14dp"
         android:layout_marginBottom="8dp"
-        android:text="tvAlis"
+        android:text="Alış"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tvSatis"
@@ -79,7 +79,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="13dp"
         android:layout_marginBottom="8dp"
-        android:text="tvSatis"
+        android:text="Satış"
         android:textSize="13sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/imgDegisim"
@@ -96,5 +96,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/none" />
+
+    <TextView
+        android:id="@+id/tvDegisim"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:text="Değişim"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvSatis" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
