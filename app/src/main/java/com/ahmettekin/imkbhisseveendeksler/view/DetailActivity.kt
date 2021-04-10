@@ -64,9 +64,9 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun renderData() {
-
         val values: ArrayList<Entry> = ArrayList()
         var maxStockValue=0f
+
         for(temp in detailModel?.graphicData!!){
             values.add(Entry(temp?.day!!.toFloat(),temp.value!!.toFloat()))
             if(temp.value!! >maxStockValue) maxStockValue= temp.value!!.toFloat()
@@ -106,9 +106,8 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun setData(values: ArrayList<Entry>) {
-
-
         val set1: LineDataSet
+
         if (mChart.data != null && mChart.data.dataSetCount > 0) {
             set1 = mChart.data.getDataSetByIndex(0) as LineDataSet
             set1.values = values

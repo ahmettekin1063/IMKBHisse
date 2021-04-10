@@ -54,7 +54,6 @@ public class AESEncryption {
         else{
             decodedKey = android.util.Base64.decode(str,android.util.Base64.DEFAULT);
         }
-
         return new SecretKeySpec(decodedKey,0,decodedKey.length,"AES");
     }
 
@@ -66,7 +65,6 @@ public class AESEncryption {
         else{
             iv = android.util.Base64.decode(str,android.util.Base64.DEFAULT);
         }
-
         return new IvParameterSpec(iv);
     }
 }

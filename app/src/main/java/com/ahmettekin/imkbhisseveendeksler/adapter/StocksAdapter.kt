@@ -49,13 +49,10 @@ class StocksAdapter(private val myList: List<ListModel.Stock?>?, private val aes
         holder.itemView.tvSatis.text = String.format("%.2f", myList[position]?.offer)
         holder.itemView.tvHacim.text = String.format("%.2f", myList[position]?.volume)
 
-        if (myList[position]?.isUp!!) {
-            holder.itemView.imgDegisim.setImageResource(R.drawable.up_arrow)
-        }
-        else if (myList[position]?.isDown!!) {
-            holder.itemView.imgDegisim.setImageResource(R.drawable.down_arrow)
-        }else{
-            holder.itemView.imgDegisim.setImageResource(R.drawable.none)
+        when {
+            myList[position]?.isUp!! -> holder.itemView.imgDegisim.setImageResource(R.drawable.up_arrow)
+            myList[position]?.isDown!! -> holder.itemView.imgDegisim.setImageResource(R.drawable.down_arrow)
+            else ->  holder.itemView.imgDegisim.setImageResource(R.drawable.none)
         }
 
         if (position % 2 == 0) holder.itemView.setBackgroundColor(
