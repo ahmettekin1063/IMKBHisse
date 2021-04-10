@@ -1,18 +1,12 @@
 package com.ahmettekin.imkbhisseveendeksler.view
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
-import android.widget.SlidingDrawer
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
-
-
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
