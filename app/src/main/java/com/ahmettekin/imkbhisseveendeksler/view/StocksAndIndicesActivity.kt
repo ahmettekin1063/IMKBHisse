@@ -123,6 +123,7 @@ class StocksAndIndicesActivity : AppCompatActivity(){
             }
         })
 
+
         navigationView.setNavigationItemSelectedListener {
 
             when (it.itemId) {
@@ -146,10 +147,7 @@ class StocksAndIndicesActivity : AppCompatActivity(){
             }
 
             override fun onDrawerOpened(drawerView: View) {
-                this@StocksAndIndicesActivity.currentFocus?.let { view ->
-                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-                    imm?.hideSoftInputFromWindow(view.windowToken, 0)
-                }
+                searchView.clearFocus()
             }
 
             override fun onDrawerClosed(drawerView: View) {}
