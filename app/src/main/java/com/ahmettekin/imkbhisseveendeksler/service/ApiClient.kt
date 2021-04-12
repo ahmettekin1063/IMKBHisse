@@ -1,10 +1,11 @@
 package com.ahmettekin.imkbhisseveendeksler.service
 
+import com.ahmettekin.imkbhisseveendeksler.BASE_URL
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object HandshakeApiClient {
-    private const val BASE_URL="https://mobilechallenge.veripark.com/"
+object ApiClient {
+
     private var retrofit: Retrofit? = null
     val client: Retrofit?
         get() {

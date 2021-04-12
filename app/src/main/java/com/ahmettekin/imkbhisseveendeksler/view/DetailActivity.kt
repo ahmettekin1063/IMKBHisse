@@ -3,11 +3,19 @@ package com.ahmettekin.imkbhisseveendeksler.view
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.ahmettekin.imkbhisseveendeksler.R
+import com.ahmettekin.imkbhisseveendeksler.*
+import com.ahmettekin.imkbhisseveendeksler.aesIV
+import com.ahmettekin.imkbhisseveendeksler.aesKey
+import com.ahmettekin.imkbhisseveendeksler.authorization
+import com.ahmettekin.imkbhisseveendeksler.decrypt
+import com.ahmettekin.imkbhisseveendeksler.encrypt
+import com.ahmettekin.imkbhisseveendeksler.model.DetailRequestModel
 import com.ahmettekin.imkbhisseveendeksler.model.detailmodelpackage.DetailModel
-import com.ahmettekin.imkbhisseveendeksler.utils.AESEncryption
+import com.ahmettekin.imkbhisseveendeksler.service.ApiClient
+import com.ahmettekin.imkbhisseveendeksler.service.DetailApiInterface
 import com.ahmettekin.imkbhisseveendeksler.utils.MyMarkerView
 import com.github.mikephil.charting.components.LimitLine
 import com.github.mikephil.charting.components.XAxis
@@ -18,33 +26,66 @@ import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.Utils
 import kotlinx.android.synthetic.main.activity_detail.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class DetailActivity : AppCompatActivity() {
-    private var detailModel: DetailModel?=null
-    private var aesKey:String?=null
-    private var aesIV:String?=null
+
+    private var id: Int? = 0
+    private var values: ArrayList<Entry>? = ArrayList()
+    private var detailModel: DetailModel? = null
+    private var maxStockValue = 0f
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
-        initialization()
-        configureUI(detailModel)
-        renderData()
-    }
-
-    private fun initialization() {
-        detailModel=intent.getSerializableExtra("detailModel") as DetailModel?
-        aesKey=intent.getStringExtra("aesKey")
-        aesIV=intent.getStringExtra("aesIV")
         mChart.setTouchEnabled(true)
         mChart.setPinchZoom(false)
         val mv = MyMarkerView(applicationContext, R.layout.custom_marker_view)
         mv.chartView = mChart
         mChart.marker = mv
+        id = intent.getIntExtra("id", 0)
+        initDetails()
+        renderData()
+    }
+
+    private fun initDetails() {
+        val encryptedId = encrypt(id.toString(), aesKey, aesIV)
+        val detailApi = ApiClient.client?.create(DetailApiInterface::class.java)
+        val apiCall = detailApi?.getDetail(DetailRequestModel(encryptedId), authorization)
+
+        apiCall?.enqueue(object : Callback<DetailModel> {
+            override fun onResponse(call: Call<DetailModel>, response: Response<DetailModel>) {
+                if (response.isSuccessful && response.body()?.status?.isSuccess!!) {
+                    detailModel = response.body()
+
+                    for (temp in response.body()?.graphicData!!) {
+                        values?.add(Entry(temp?.day!!.toFloat(), temp.value!!.toFloat()))
+                        if (temp?.value!! > maxStockValue) maxStockValue = temp.value!!.toFloat()
+                    }
+
+                    renderData()
+                    configureUI(detailModel)
+
+                } else {
+                    Toast.makeText(this@DetailActivity, "Hata", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<DetailModel>, t: Throwable) {
+                Toast.makeText(
+                    this@DetailActivity,
+                    "Hata: ${t.localizedMessage}",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        })
     }
 
     private fun configureUI(detailModel: DetailModel?) {
-        "Sembol: ${AESEncryption.decrypt(detailModel?.symbol, aesKey, aesIV)}".also { tvDetaySembol.text = it }
+        "Sembol: ${decrypt(detailModel?.symbol!!, aesKey, aesIV)}".also { tvDetaySembol.text = it }
         "Fiyat: ${detailModel?.price}".also { tvDetayFiyat.text = it }
         "%Fark: ${kotlin.math.abs(detailModel?.difference!!)}".also { tvDetayFark.text = it }
         "Hacim: ${String.format("%.2f", detailModel.volume)}".also { tvDetayHacim.text = it }
@@ -64,13 +105,6 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun renderData() {
-        val values: ArrayList<Entry> = ArrayList()
-        var maxStockValue=0f
-
-        for(temp in detailModel?.graphicData!!){
-            values.add(Entry(temp?.day!!.toFloat(),temp.value!!.toFloat()))
-            if(temp.value!! >maxStockValue) maxStockValue= temp.value!!.toFloat()
-        }
 
         val llXAxis = LimitLine(10f, "Index 10")
         llXAxis.lineWidth = 4f
@@ -82,7 +116,7 @@ class DetailActivity : AppCompatActivity() {
         xAxis.axisMaximum = 30f
         xAxis.axisMinimum = 0f
         xAxis.setDrawLimitLinesBehindData(true)
-        val ll1 = LimitLine(maxStockValue*1.2f, "Maximum Limit")
+        val ll1 = LimitLine(maxStockValue * 1.2f, "Maximum Limit")
         ll1.lineWidth = 4f
         ll1.enableDashedLine(10f, 10f, 0f)
         ll1.labelPosition = LimitLine.LimitLabelPosition.RIGHT_TOP
@@ -96,16 +130,16 @@ class DetailActivity : AppCompatActivity() {
         leftAxis.removeAllLimitLines()
         leftAxis.addLimitLine(ll1)
         leftAxis.addLimitLine(ll2)
-        leftAxis.axisMaximum = maxStockValue*1.5f
+        leftAxis.axisMaximum = maxStockValue * 1.5f
         leftAxis.axisMinimum = 0f
         leftAxis.enableGridDashedLine(10f, 10f, 0f)
         leftAxis.setDrawZeroLine(false)
         leftAxis.setDrawLimitLinesBehindData(false)
         mChart.axisRight.isEnabled = false
-        setData(values)
+        setData()
     }
 
-    private fun setData(values: ArrayList<Entry>) {
+    private fun setData() {
         val set1: LineDataSet
 
         if (mChart.data != null && mChart.data.dataSetCount > 0) {
