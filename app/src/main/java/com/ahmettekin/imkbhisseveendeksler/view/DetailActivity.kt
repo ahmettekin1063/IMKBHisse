@@ -3,6 +3,7 @@ package com.ahmettekin.imkbhisseveendeksler.view
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -25,10 +26,20 @@ import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet
 import com.github.mikephil.charting.utils.Utils
+import com.google.gson.GsonBuilder
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.observers.DisposableObserver
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_detail.*
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 
 class DetailActivity : AppCompatActivity() {
 
@@ -36,52 +47,65 @@ class DetailActivity : AppCompatActivity() {
     private var values: ArrayList<Entry>? = ArrayList()
     private var detailModel: DetailModel? = null
     private var maxStockValue = 0f
-
+    lateinit var retrofit:Retrofit
+    lateinit var compositeDisposable: CompositeDisposable
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail)
+        id = intent.getIntExtra("id", 0)
+
+        val clientBuilder = OkHttpClient.Builder()
+        val loggingInterceptor=HttpLoggingInterceptor()
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        clientBuilder.addInterceptor(loggingInterceptor)
+
+        val gson=GsonBuilder().setLenient().create()
+        retrofit=Retrofit.Builder()
+            .baseUrl(BASE_URL)
+            .client(clientBuilder.build())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .build()
+
+        initDetails()
+
         mChart.setTouchEnabled(true)
         mChart.setPinchZoom(false)
         val mv = MyMarkerView(applicationContext, R.layout.custom_marker_view)
         mv.chartView = mChart
         mChart.marker = mv
-        id = intent.getIntExtra("id", 0)
-        initDetails()
-        renderData()
+
     }
 
-    private fun initDetails() {
+    fun initDetails(){
         val encryptedId = encrypt(id.toString(), aesKey, aesIV)
-        val detailApi = ApiClient.client?.create(DetailApiInterface::class.java)
-        val apiCall = detailApi?.getDetail(DetailRequestModel(encryptedId), authorization)
-
-        apiCall?.enqueue(object : Callback<DetailModel> {
-            override fun onResponse(call: Call<DetailModel>, response: Response<DetailModel>) {
-                if (response.isSuccessful && response.body()?.status?.isSuccess!!) {
-                    detailModel = response.body()
-
-                    for (temp in response.body()?.graphicData!!) {
-                        values?.add(Entry(temp?.day!!.toFloat(), temp.value!!.toFloat()))
-                        if (temp?.value!! > maxStockValue) maxStockValue = temp.value!!.toFloat()
+        val detailApi=retrofit.create(DetailApiInterface::class.java)
+        compositeDisposable= CompositeDisposable()
+        compositeDisposable.add(detailApi.getDetail(DetailRequestModel(encryptedId), authorization)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableObserver<DetailModel>() {
+                    override fun onNext(t: DetailModel) {
+                        detailModel = t
+                        for (temp in t.graphicData!!) {
+                            values?.add(Entry(temp?.day!!.toFloat(), temp.value!!.toFloat()))
+                            if (temp?.value!! > maxStockValue) maxStockValue =
+                                temp.value!!.toFloat()
+                        }
+                        renderData()
+                        configureUI(detailModel)
                     }
 
-                    renderData()
-                    configureUI(detailModel)
+                    override fun onError(e: Throwable) {
+                        println("hata: ${e.localizedMessage}")
+                    }
 
-                } else {
-                    Toast.makeText(this@DetailActivity, "Hata", Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<DetailModel>, t: Throwable) {
-                Toast.makeText(
-                    this@DetailActivity,
-                    "Hata: ${t.localizedMessage}",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        })
+                    override fun onComplete() {
+                        Log.e("BAŞARILI: ","BAŞARILI")
+                    }
+                })
+        )
     }
 
     private fun configureUI(detailModel: DetailModel?) {
@@ -105,7 +129,6 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun renderData() {
-
         val llXAxis = LimitLine(10f, "Index 10")
         llXAxis.lineWidth = 4f
         llXAxis.enableDashedLine(10f, 10f, 0f)
@@ -141,7 +164,6 @@ class DetailActivity : AppCompatActivity() {
 
     private fun setData() {
         val set1: LineDataSet
-
         if (mChart.data != null && mChart.data.dataSetCount > 0) {
             set1 = mChart.data.getDataSetByIndex(0) as LineDataSet
             set1.values = values
@@ -150,8 +172,8 @@ class DetailActivity : AppCompatActivity() {
         } else {
             set1 = LineDataSet(values, "Sample Data");
             set1.setDrawIcons(false)
-            set1.enableDashedLine(10f, 5f, 0f);
-            set1.enableDashedHighlightLine(10f, 5f, 0f);
+            set1.enableDashedLine(10f, 5f, 0f)
+            set1.enableDashedHighlightLine(10f, 5f, 0f)
             set1.color = Color.RED
             set1.setCircleColor(Color.RED)
             set1.lineWidth = 1f
@@ -160,19 +182,24 @@ class DetailActivity : AppCompatActivity() {
             set1.valueTextSize = 9f
             set1.setDrawFilled(true)
             set1.formLineWidth = 1f
-            set1.formLineDashEffect = DashPathEffect(floatArrayOf(10f, 5f), 0f);
+            set1.formLineDashEffect = DashPathEffect(floatArrayOf(10f, 5f), 0f)
             set1.formSize = 15f
 
             if (Utils.getSDKInt() >= 18) {
-                val drawable = ContextCompat.getDrawable(this, R.drawable.fade_red);
+                val drawable = ContextCompat.getDrawable(this, R.drawable.fade_red)
                 set1.fillDrawable = drawable
             } else {
                 set1.fillColor = Color.RED
             }
             val dataSets = ArrayList<ILineDataSet>()
             dataSets.add(set1)
-            val data = LineData(dataSets);
+            val data = LineData(dataSets)
             mChart.data = data
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        compositeDisposable.clear()
     }
 }

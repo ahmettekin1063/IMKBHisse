@@ -34,7 +34,6 @@ import retrofit2.Response
 import java.util.*
 import kotlin.collections.ArrayList
 
-//static yapılabilir
 class StocksAndIndicesActivity : AppCompatActivity(), RecyclerViewOnClickListener {
     private var myList: List<Stock?>? = null
 
@@ -43,18 +42,16 @@ class StocksAndIndicesActivity : AppCompatActivity(), RecyclerViewOnClickListene
         setContentView(R.layout.activity_stocks_and_indices)
         initialization()
         configureListener()
-    }
+  }
 
     private fun initialization() {
         val toggle = ActionBarDrawerToggle(this@StocksAndIndicesActivity, drawer, toolbar_stockList, 0, 0)
         drawer.addDrawerListener(toggle)
         toggle.syncState()
-        configureRecylerView("all")
+        configureRecylerView(Periods.ALL.period)
         navigationView.inflateHeaderView(R.layout.navigation_baslik)
-        val view = layoutInflater.inflate(R.layout.row_layout, window.decorView.rootView as ViewGroup, false)
-        headerLayout.addView(view)
     }
-    //enum yapılabilir
+
     private fun configureRecylerView(period: String) {
         val encryptedPeriod =encrypt(period, aesKey, aesIV)
         val stocksApi = ApiClient.client?.create(StocksApiInterface::class.java)
@@ -113,12 +110,12 @@ class StocksAndIndicesActivity : AppCompatActivity(), RecyclerViewOnClickListene
 
         navigationView.setNavigationItemSelectedListener {
             when (it.itemId) {
-                R.id.item_hisse -> configureRecylerView("all")
-                R.id.item_yuk -> configureRecylerView("increasing")
-                R.id.item_dus -> configureRecylerView("decreasing")
-                R.id.item_hcm_30 -> configureRecylerView("volume30")
-                R.id.item_hcm_50 -> configureRecylerView("volume50")
-                R.id.item_hcm_100 -> configureRecylerView("volume100")
+                R.id.item_hisse -> configureRecylerView(Periods.ALL.period)
+                R.id.item_yuk -> configureRecylerView(Periods.INCREASING.period)
+                R.id.item_dus -> configureRecylerView(Periods.DECREASING.period)
+                R.id.item_hcm_30 -> configureRecylerView(Periods.VOLUME_30.period)
+                R.id.item_hcm_50 -> configureRecylerView(Periods.VOLUME_50.period)
+                R.id.item_hcm_100 -> configureRecylerView(Periods.VOLUME_100.period)
             }
             drawer.closeDrawer(GravityCompat.START)
             true
@@ -150,7 +147,7 @@ class StocksAndIndicesActivity : AppCompatActivity(), RecyclerViewOnClickListene
         startActivity(intent)
     }
 
-    private fun postDetailsToDetailActivity(id: Int) {
+    /*private fun postDetailsToDetailActivity(id: Int) {
         val encryptedId = encrypt(id.toString(), aesKey, aesIV)
         val detailApi = ApiClient.client?.create(DetailApiInterface::class.java)
         val apiCall = detailApi?.getDetail(DetailRequestModel(encryptedId),authorization)
@@ -170,7 +167,7 @@ class StocksAndIndicesActivity : AppCompatActivity(), RecyclerViewOnClickListene
                 Toast.makeText(this@StocksAndIndicesActivity, "Hata: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         })
-    }
+    }*/
 
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {

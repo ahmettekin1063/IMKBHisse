@@ -42,7 +42,7 @@ private fun strToIV(str: String): IvParameterSpec {
 }
 
 
-private fun String.strDecryption():ByteArray{
+private fun String.strDecryption(): ByteArray {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         Base64.getDecoder().decode(this)
     } else {

@@ -29,12 +29,12 @@ class StocksAdapter(private val myList: List<ListModel.Stock?>?, private val aes
 
     private fun configureUI(holder: MyViewHolder, position: Int) {
         holder.itemView.tvDegisim.visibility=View.INVISIBLE
-        holder.itemView.tvSembol.text = decrypt(myList?.get(position)?.symbol!!, aesKey, aesIV)
-        holder.itemView.tvFiyat.text = String.format("%.2f", myList?.get(position)?.price)
-        holder.itemView.tvFark.text = String.format("%.2f", abs(myList?.get(position)?.difference!!))
-        holder.itemView.tvAlis.text = String.format("%.2f", myList[position]?.bid)
-        holder.itemView.tvSatis.text = String.format("%.2f", myList[position]?.offer)
-        holder.itemView.tvHacim.text = String.format("%.2f", myList[position]?.volume)
+        holder.itemView.tvHeaderSembol.text = decrypt(myList?.get(position)?.symbol!!, aesKey, aesIV)
+        holder.itemView.tvHeaderFiyat.text = String.format("%.2f", myList?.get(position)?.price)
+        holder.itemView.tvHeaderFark.text = String.format("%.2f", abs(myList?.get(position)?.difference!!))
+        holder.itemView.tvHeaderAlis.text = String.format("%.2f", myList[position]?.bid)
+        holder.itemView.tvHeaderSatis.text = String.format("%.2f", myList[position]?.offer)
+        holder.itemView.tvHeaderHacim.text = String.format("%.2f", myList[position]?.volume)
 
         when {
             myList[position]?.isUp!! -> holder.itemView.imgDegisim.setImageResource(R.drawable.up_arrow)
