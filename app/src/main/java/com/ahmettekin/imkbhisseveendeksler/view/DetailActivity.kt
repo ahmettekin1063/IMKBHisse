@@ -1,9 +1,12 @@
 package com.ahmettekin.imkbhisseveendeksler.view
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.DashPathEffect
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -93,8 +96,11 @@ class DetailActivity : AppCompatActivity() {
                             if (temp?.value!! > maxStockValue) maxStockValue =
                                 temp.value!!.toFloat()
                         }
-                        renderData()
-                        configureUI(detailModel)
+                        runOnUiThread {
+                            renderData()
+                            configureUI(detailModel)
+                        }
+
                     }
 
                     override fun onError(e: Throwable) {
@@ -110,8 +116,8 @@ class DetailActivity : AppCompatActivity() {
 
     private fun configureUI(detailModel: DetailModel?) {
         "Sembol: ${decrypt(detailModel?.symbol!!, aesKey, aesIV)}".also { tvDetaySembol.text = it }
-        "Fiyat: ${detailModel?.price}".also { tvDetayFiyat.text = it }
-        "%Fark: ${kotlin.math.abs(detailModel?.difference!!)}".also { tvDetayFark.text = it }
+        "Fiyat: ${detailModel.price}".also { tvDetayFiyat.text = it }
+        "%Fark: ${kotlin.math.abs(detailModel.difference!!)}".also { tvDetayFark.text = it }
         "Hacim: ${String.format("%.2f", detailModel.volume)}".also { tvDetayHacim.text = it }
         "Alış: ${detailModel.bid}".also { tvDetayAlis.text = it }
         "Satış:${detailModel.offer}".also { tvDetaySatis.text = it }
@@ -160,6 +166,7 @@ class DetailActivity : AppCompatActivity() {
         leftAxis.setDrawLimitLinesBehindData(false)
         mChart.axisRight.isEnabled = false
         setData()
+        mChart.invalidate()
     }
 
     private fun setData() {

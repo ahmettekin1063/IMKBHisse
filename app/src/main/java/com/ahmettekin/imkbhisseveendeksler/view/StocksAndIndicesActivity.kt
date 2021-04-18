@@ -89,9 +89,6 @@ class StocksAndIndicesActivity : AppCompatActivity(), RecyclerViewOnClickListene
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 val myFilteredList = ArrayList<Stock>()
-                /**
-                 * IMPORTANT!!!apply ' a bak unwrapping
-                 */
                 myList?.let {
                     for (temp in it) {
                         if (decrypt(temp!!.symbol!!, aesKey, aesIV).toLowerCase().trim()
@@ -141,33 +138,10 @@ class StocksAndIndicesActivity : AppCompatActivity(), RecyclerViewOnClickListene
     }
 
     override fun recyclerViewItemClick(id:Int) {
-        //postDetailsToDetailActivity(id)
         val intent=Intent(this@StocksAndIndicesActivity, DetailActivity::class.java)
         intent.putExtra("id",id)
         startActivity(intent)
     }
-
-    /*private fun postDetailsToDetailActivity(id: Int) {
-        val encryptedId = encrypt(id.toString(), aesKey, aesIV)
-        val detailApi = ApiClient.client?.create(DetailApiInterface::class.java)
-        val apiCall = detailApi?.getDetail(DetailRequestModel(encryptedId),authorization)
-
-        apiCall?.enqueue(object : Callback<DetailModel> {
-            override fun onResponse(call: Call<DetailModel>, response: Response<DetailModel>) {
-                if (response.isSuccessful&&response.body()?.status?.isSuccess!!) {
-                    val intent = Intent(this@StocksAndIndicesActivity, DetailActivity::class.java)
-                    intent.putExtra("detailModel", response.body() as DetailModel)
-                    startActivity(intent)
-                }else{
-                    Toast.makeText(this@StocksAndIndicesActivity,"Hata",Toast.LENGTH_SHORT).show()
-                }
-            }
-
-            override fun onFailure(call: Call<DetailModel>, t: Throwable) {
-                Toast.makeText(this@StocksAndIndicesActivity, "Hata: ${t.localizedMessage}", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }*/
 
     override fun onBackPressed() {
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -176,5 +150,4 @@ class StocksAndIndicesActivity : AppCompatActivity(), RecyclerViewOnClickListene
             super.onBackPressed()
         }
     }
-
 }
